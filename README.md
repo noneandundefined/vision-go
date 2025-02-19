@@ -2,6 +2,9 @@
   <a href="" target="_blank" rel="noopener noreferrer">
     <img width="150" src="https://github.com/noneandundefined/vision-ui/blob/main/public/logo-vision-none.png" alt="Vision logo">
   </a>
+  <a href="" target="_blank" rel="noopener noreferrer">
+    <img width="30" src="https://github.com/noneandundefined/vision-go/blob/main/public/go.png" alt="JS logo">
+  </a>
 </p>
 </br>
 <p align="center">
