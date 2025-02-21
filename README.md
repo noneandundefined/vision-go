@@ -27,7 +27,7 @@ Vision allows any user, whether it's your development team, to visually look at 
 
 ## Documentation
 
-# Go
+## Go
 
 Configuring GO for server monitoring
 
@@ -302,24 +302,76 @@ func (v *Vision) GetVisionStats() MonitoringResponse {
 }
 ```
 
-### Linking monitoring to an endpoint
-
-Create a new handler to handle admin requests and output the GetVisionStats() function.
-
-### Example
-
-Before starting the database query, create a variable for the initial time and calculate the difference at the end.
-
-If there is an error, call the VisionDBError() method to increase the DB error counter.
-
 ```go
-queryStart := time.Now()
-isUsername, err := actions.GetUserByUsername(payload.Username)
-if err != nil {
-	h.monitor.VisionDBError()
-	h.logger.Error("[DB ERROR]", zap.Error(err))
-	utils.WriteError(w, http.StatusInternalServerError, err)
-	return
+package api
+
+import "github.com/noneandundefined/vision-go"
+
+func (s *APIServer) Run() error {
+	router := mux.NewRouter()
+
+	router.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("./docs/"))))
+
+	// Vision monitoring
+	monitoring := vision.NewVision()
+	router.HandleFunc("/admin/vision", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./docs/vision/index.html")
+	}).Methods("GET")
 }
-h.monitor.VisionDBQuery(time.Since(queryStart))
 ```
+
+This one index.html it may be an outdated version, see the current version [index.html -> dev-helpers](https://github.com/noneandundefined/vision-ui/blob/main/dev-helpers/index.html)
+
+```html
+<!-- HTML for dev server -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="https://github.com/noneandundefined/vision/blob/main/public/logo-vision-none.png?raw=true"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Keep up to date with what is happening on your server using - Vision"
+    />
+
+    <!-- Stylization and actions -->
+    <script
+      type="module"
+      src="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.bundle.js"
+      defer
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.css"
+    />
+
+    <title>Look at the Vision!</title>
+
+    <!-- Defining a meta tag for the monitoring URL -->
+    <!-- Thanks to this meta tag, Vision will take server monitoring -->
+    <meta
+      name="monitoring-url"
+      content="http://localhost:8001/micro/user/admin/vision/stats"
+    />
+  </head>
+  <body>
+    <!--
+			This HTML file is a template.
+
+			Vision allows any user, whether it's your development team,
+			to visually look at the server in production mode.
+
+			Be aware of all errors, server response time, CPU and RAM load.
+			Look at the Vision!
+		-->
+    <div id="vision"></div>
+  </body>
+</html>
+```
+
+Additional documentation on using Vision UI -> [Look at the Vision!](https://github.com/noneandundefined/vision-ui/blob/main/docs/languages/go.md)
