@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/noneandundefined/vision-go"
 	"github.com/noneandundefined/vision-go/config"
 	"gopkg.in/gomail.v2"
 )
@@ -12,12 +13,12 @@ import (
 // used to send the email itself.
 // Initializes the html content,
 // the sender's and recipient's data.
-func email() {
+func email(stats *vision.Vision) {
 	mail := gomail.NewMessage()
 	mail.SetHeader("From", config.EMAIL_CLIENT)
 	mail.SetHeader("To", config.EMAIL_CLIENT)
 	mail.SetHeader("Subject", "Daily 12-hour statistics report - Vision UI")
-	mail.SetBody("text/html", ``)
+	mail.SetBody("text/html", LoadEmailTemplate(stats))
 
 	d := gomail.NewDialer(config.EMAIL_SERVER, int(config.EMAIL_PORT), config.EMAIL_CLIENT, config.EMAIL_PASSWORD)
 	if err := d.DialAndSend(mail); err != nil {
@@ -34,13 +35,13 @@ func email() {
 // The EmailStats function is used to send a new statistics stream to the mail,
 // with an initial frequency of every 12 hours.
 // You can change the settings and frequency in config.
-func EmailStats() {
+func EmailStats(stats *vision.Vision) {
 	ticker := time.NewTicker(time.Duration(config.EMAIL_PERIOD) * time.Hour)
 	defer ticker.Stop()
 
-	go email()
+	go email(stats)
 
 	for range ticker.C {
-		go email()
+		go email(stats)
 	}
 }
