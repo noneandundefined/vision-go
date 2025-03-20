@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+RESET='\033[0m'
+
+echo -e "${GREEN}Running pre-commit hook...${RESET}"
+
+# Получаем список измененных файлов
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+CHANGED_FILES=$(git diff --cached --name-only)
+
+if [ "$CURRENT_BRANCH" = "main" ] && echo "$CHANGED_FILES" | grep -qE '^./'; then
+    echo -e "${BLUE}Changes main directory detected.${RESET}"
+
+    echo -e "${GREEN}[|] Running formatted and build...${RESET}"
+
+    # Установка
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    go install golang.org/x/tools/cmd/goimports@latest
+
+    make fmt
+    make check
+    make lint
+
+    git add .
+    echo -e "${GREEN}[+] Success formatted and build!${RESET}"
+    cd ..
+elif echo "$CHANGED_FILES" | grep -qE '^./'; then
+    echo -e "${BLUE}Changes main directory detected. Only formatting will be done.${RESET}"
+
+    make fmt
+
+    git add .
+    echo -e "${GREEN}[+] Success formatted for main!${RESET}"
+    cd ..
+else
+    echo -e "${YELLOW}No changes in main directory. Skipping actions for main.${RESET}"
+fi
