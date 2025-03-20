@@ -16,8 +16,8 @@ func email() {
 	mail := gomail.NewMessage()
 	mail.SetHeader("From", config.EMAIL_CLIENT)
 	mail.SetHeader("To", config.EMAIL_CLIENT)
-	mail.SetHeader("Subject", "")
-	mail.SetBody("text/html", "")
+	mail.SetHeader("Subject", "Daily 12-hour statistics report - Vision UI")
+	mail.SetBody("text/html", ``)
 
 	d := gomail.NewDialer(config.EMAIL_SERVER, int(config.EMAIL_PORT), config.EMAIL_CLIENT, config.EMAIL_PASSWORD)
 	if err := d.DialAndSend(mail); err != nil {
