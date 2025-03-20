@@ -14,7 +14,7 @@ echo -e "${GREEN}Running pre-commit hook...${RESET}"
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 CHANGED_FILES=$(git diff --cached --name-only)
 
-if [ "$CURRENT_BRANCH" = "main" ] && echo "$CHANGED_FILES" | grep -qE '^./'; then
+if [ "$CURRENT_BRANCH" = "main" ] && echo "$CHANGED_FILES" | grep -qE '^.'; then
     echo -e "${BLUE}Changes main directory detected.${RESET}"
 
     echo -e "${GREEN}[|] Running formatted and build...${RESET}"
@@ -30,7 +30,7 @@ if [ "$CURRENT_BRANCH" = "main" ] && echo "$CHANGED_FILES" | grep -qE '^./'; the
     git add .
     echo -e "${GREEN}[+] Success formatted and build!${RESET}"
     cd ..
-elif echo "$CHANGED_FILES" | grep -qE '^./'; then
+elif echo "$CHANGED_FILES" | grep -qE '^.'; then
     echo -e "${BLUE}Changes main directory detected. Only formatting will be done.${RESET}"
 
     make fmt

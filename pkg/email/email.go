@@ -1,16 +1,16 @@
 package email
 
 import (
-	"time"
 	"log"
+	"time"
 
 	"github.com/noneandundefined/vision-go/config"
 	"gopkg.in/gomail.v2"
 )
 
-// The private email function is 
-// used to send the email itself. 
-// Initializes the html content, 
+// The private email function is
+// used to send the email itself.
+// Initializes the html content,
 // the sender's and recipient's data.
 func email() {
 	mail := gomail.NewMessage()
@@ -26,11 +26,13 @@ func email() {
 	}
 
 	log.Printf("email sent: %s\n", config.EMAIL_CLIENT)
-	d.DialAndSend(mail)
+	if err := d.DialAndSend(mail); err != nil {
+		log.Printf("%s\n", err)
+	}
 }
 
-// The EmailStats function is used to send a new statistics stream to the mail, 
-// with an initial frequency of every 12 hours. 
+// The EmailStats function is used to send a new statistics stream to the mail,
+// with an initial frequency of every 12 hours.
 // You can change the settings and frequency in config.
 func EmailStats() {
 	ticker := time.NewTicker(time.Duration(config.EMAIL_PERIOD) * time.Hour)
