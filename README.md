@@ -33,11 +33,11 @@ Configuring GO for server monitoring
 
 ### Content
 
-- Initial configuration
-- Models
-- Methods of obtaining monitoring
-- Statistics
-- Linking monitoring to an endpoint
+-   Initial configuration
+-   Models
+-   Methods of obtaining monitoring
+-   Statistics
+-   Linking monitoring to an endpoint
 
 ## Setup
 
@@ -326,41 +326,41 @@ This one index.html it may be an outdated version, see the current version [inde
 <!-- HTML for dev server -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="https://github.com/noneandundefined/vision/blob/main/public/logo-vision-none.png?raw=true"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Keep up to date with what is happening on your server using - Vision"
-    />
+	<head>
+		<meta charset="UTF-8" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="https://github.com/noneandundefined/vision/blob/main/public/logo-vision-none.png?raw=true"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Keep up to date with what is happening on your server using - Vision"
+		/>
 
-    <!-- Stylization and actions -->
-    <script
-      type="module"
-      src="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.bundle.js"
-      defer
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.css"
-    />
+		<!-- Stylization and actions -->
+		<script
+			type="module"
+			src="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.bundle.js"
+			defer
+		></script>
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/@artemiik/vision-ui@1.0.2/dist/vision.css"
+		/>
 
-    <title>Look at the Vision!</title>
+		<title>Look at the Vision!</title>
 
-    <!-- Defining a meta tag for the monitoring URL -->
-    <!-- Thanks to this meta tag, Vision will take server monitoring -->
-    <meta
-      name="monitoring-url"
-      content="http://localhost:8001/micro/user/admin/vision/stats"
-    />
-  </head>
-  <body>
-    <!--
+		<!-- Defining a meta tag for the monitoring URL -->
+		<!-- Thanks to this meta tag, Vision will take server monitoring -->
+		<meta
+			name="monitoring-url"
+			content="http://localhost:8001/micro/user/admin/vision/stats"
+		/>
+	</head>
+	<body>
+		<!--
 			This HTML file is a template.
 
 			Vision allows any user, whether it's your development team,
@@ -369,9 +369,100 @@ This one index.html it may be an outdated version, see the current version [inde
 			Be aware of all errors, server response time, CPU and RAM load.
 			Look at the Vision!
 		-->
-    <div id="vision"></div>
-  </body>
+		<div id="vision"></div>
+	</body>
 </html>
 ```
 
 Additional documentation on using Vision UI -> [Look at the Vision!](https://github.com/noneandundefined/vision-ui/blob/main/docs/languages/go.md)
+
+## Использование Selectel Object Storage для хранения конфиденциальных данных
+
+Вы можете использовать Selectel Object Storage для безопасного хранения и получения конфиденциальных данных, включая файлы `.env`.
+
+### Подготовка
+
+1. Создайте аккаунт в [Selectel](https://selectel.ru/services/cloud/storage/)
+2. Создайте контейнер (бакет) для хранения данных
+3. Получите ключи доступа (Access Key и Secret Key)
+4. Установите необходимые зависимости:
+
+```bash
+go get github.com/aws/aws-sdk-go-v2/aws
+go get github.com/aws/aws-sdk-go-v2/config
+go get github.com/aws/aws-sdk-go-v2/credentials
+go get github.com/aws/aws-sdk-go-v2/service/s3
+```
+
+### Загрузка .env файла в Selectel
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/noneandundefined/vision-go/pkg/cloud"
+)
+
+func main() {
+	// Создаем клиент Selectel
+	client, err := cloud.NewSelectelClient(cloud.SelectelConfig{
+		AccessKey: "ваш_access_key",
+		SecretKey: "ваш_secret_key",
+		Endpoint:  "https://s3.selcdn.ru", // Эндпоинт Selectel
+		Bucket:    "имя_вашего_бакета",
+	})
+
+	if err != nil {
+		log.Fatalf("Ошибка создания клиента: %v", err)
+	}
+
+	// Загружаем .env файл в Selectel
+	err = cloud.UploadEnvFile(client, "имя_вашего_бакета", "env/config.env", ".env")
+	if err != nil {
+		log.Fatalf("Ошибка загрузки: %v", err)
+	}
+
+	log.Println("Файл .env успешно загружен в Selectel Object Storage")
+}
+```
+
+### Загрузка .env файла из Selectel
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/noneandundefined/vision-go/pkg/cloud"
+)
+
+func main() {
+	// Загружаем .env файл из Selectel и применяем переменные окружения
+	err := cloud.LoadEnvFromSelectel(
+		"ваш_access_key",
+		"ваш_secret_key",
+		"https://s3.selcdn.ru",
+		"имя_вашего_бакета",
+		"env/config.env",
+	)
+
+	if err != nil {
+		log.Fatalf("Ошибка загрузки конфигурации: %v", err)
+	}
+
+	log.Println("Конфигурация успешно загружена из Selectel Object Storage")
+
+	// Теперь можно использовать переменные окружения
+	// ...
+}
+```
+
+### Безопасность
+
+1. Храните ключи доступа к Selectel в безопасном месте
+2. Используйте HTTPS для соединения с Selectel
+3. Настройте права доступа к бакету, чтобы ограничить доступ
+4. Рассмотрите возможность шифрования файлов перед загрузкой для дополнительной безопасности

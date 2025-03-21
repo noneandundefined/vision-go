@@ -20,3 +20,15 @@ var EMAIL_PORT int32 = 587
 // after which statistics will be sent to the mail
 // The maximum number of hours is 65,000 (7.5 years)
 var EMAIL_PERIOD uint16 = 12
+
+// The ATTACH_LOGFILES variable allows you to
+// additionally attach all your log files
+// to the email when receiving statistics.
+var ATTACH_LOGFILES bool = false
+
+// The LOGFILES_BY_TIME_STYLES variable allows you
+// to attach only those log files that are
+// identified in the file name by the date.
+// FOR EXAMPLE, server-14.04.log | 14-03.log | errors-by-03/23/2024.log ...
+// If the file name has an old date, this log file will not be attached to the message.
+var LOGFILES_BY_TIME_STYLES bool = false // Enable ATTACH_LOGFILES for this parameter

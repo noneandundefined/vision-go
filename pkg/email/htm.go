@@ -17,77 +17,105 @@ func LoadEmailTemplate(stats *vision.Vision) string {
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
 			rel="stylesheet"
 		/>
 		<style>
 			body,
 			* {
-				font-family: 'DM Mono', monospace;
+				font-family: 'Inter', sans-serif;
+			}
+
+			p {
+				margin: 0;
+				padding: 0;
+				color: #fff;
 			}
 		</style>
 	</head>
 	<body>
 		<section
 			style="
-				min-width: 500px;
+				max-width: 600px;
 				margin: 0 auto;
-				align-items: center;
-				background-color: #eee;
-				padding: 10;
+				text-align: center;
+				background-color: #000024;
+				padding: 40px;
 				border-radius: 3px;
 			"
 		>
-			<h4>System statistic</h4>
+			<div style="display: flex; align-items: center">
+				<img
+					width="50"
+					height="50"
+					alt=""
+					src="https://github.com/Artymiik/vision/blob/main/public/logo-vision-none.png?raw=true"
+				/>
+				<div style="margin-left: 1rem">
+					<p>
+						<a
+							style="text-decoration: underline"
+							href="https://github.com/Artymiik/vision"
+							>Data Sources</a
+						>
+						/ Vision
+					</p>
+					<p style="font-size: 13px; color: #eee; margin-left: -14px;">Server monitoring</p>
+				</div>
+			</div>
+
+			<h4 style="text-align: left">System statistic</h4>
 			<div
 				style="
 					display: flex;
 					align-items: center;
+					text-align: center;
 					justify-content: space-around;
 				"
 			>
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>CPU</p>
 					<p>%.2f%%%% / 100%%%%</p>
 				</div>
 
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>Memmory</p>
 					<p>%.2f%%%% / 100%%%%</p>
 				</div>
 
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>Network</p>
 					<p>%.2f MB / 100MB</p>
 				</div>
 			</div>
 
-			<h4>Server statistic</h4>
+			<h4 style="text-align: left">Server statistic</h4>
 			<div
 				style="
 					display: flex;
 					align-items: center;
+					text-align: center;
 					justify-content: space-around;
 				"
 			>
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>Request count</p>
 					<p>%d</p>
 				</div>
 
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>Response time</p>
 					<p>%.2f</p>
 				</div>
 
-				<div style="text-align: center">
+				<div style="text-align: center; padding: 0 20px">
 					<p>Error count</p>
 					<p>%d</p>
 				</div>
 			</div>
 
-			<h4>Database statistic</h4>
-			<h4>Notifications</h4>
+			<h4 style="text-align: left">Database statistic</h4>
+			<h4 style="text-align: left">Notifications</h4>
 		</section>
 	</body>
 </html>
