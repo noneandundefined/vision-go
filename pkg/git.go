@@ -13,7 +13,7 @@ func GitRoot() string {
 	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
 	output, err := cmd.Output()
 	if err != nil {
-		log.Println("Failed to get Git root directory: %v", err)
+		log.Printf("Failed to get Git root directory: %v\n", err)
 	}
 
 	gitRoot := string(output)
@@ -21,7 +21,7 @@ func GitRoot() string {
 
 	err = os.Chdir(gitRoot)
 	if err != nil {
-		log.Println("Failed to change directory: %v", err)
+		log.Printf("Failed to change directory: %v\n", err)
 	}
 
 	return gitRoot

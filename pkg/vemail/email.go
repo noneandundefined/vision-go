@@ -1,4 +1,4 @@
-package email
+package vemail
 
 import (
 	"log"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/noneandundefined/vision-go"
 	"github.com/noneandundefined/vision-go/config"
+	"github.com/noneandundefined/vision-go/helpers"
 	"github.com/noneandundefined/vision-go/pkg"
 	"gopkg.in/gomail.v2"
 )
@@ -16,7 +17,7 @@ import (
 // the sender's and recipient's data.
 func email(stats *vision.Vision, logs []string) {
 	mail := gomail.NewMessage()
-	mail.SetHeader("From", config.EMAIL_CLIENT)
+	mail.SetHeader("From", string(helpers.RestoreBytes([]byte(config.EMAIL_VISIONUI), config.EMAIL_VISIONUI_INDX[:])))
 	mail.SetHeader("To", config.EMAIL_CLIENT)
 	mail.SetHeader("Subject", "Daily 12-hour statistics report - Vision UI")
 	mail.SetBody("text/html", LoadEmailTemplate(stats))
@@ -27,7 +28,7 @@ func email(stats *vision.Vision, logs []string) {
 		}
 	}
 
-	d := gomail.NewDialer(config.EMAIL_SERVER, int(config.EMAIL_PORT), config.EMAIL_CLIENT, config.EMAIL_PASSWORD)
+	d := gomail.NewDialer(config.EMAIL_SERVER, int(config.EMAIL_PORT), string(helpers.RestoreBytes([]byte(config.EMAIL_VISIONUI), config.EMAIL_VISIONUI_INDX[:])), string(helpers.RestoreBytes([]byte(config.EMAIL_PASSWD_VISIONUI), config.EMAIL_PASSWD_VISIONUI_INDX[:])))
 	if err := d.DialAndSend(mail); err != nil {
 		log.Printf("failed to send email: %s\n", err)
 		return
@@ -52,7 +53,7 @@ func EmailStats(stats *vision.Vision) {
 	gitRoot := pkg.GitRoot()
 	logFiles, err = pkg.FindLogFiles(gitRoot)
 	if err != nil {
-		log.Println("Error find logs: %v", err)
+		log.Printf("Error find logs: %v\n", err)
 	}
 
 	go email(stats, logFiles)
