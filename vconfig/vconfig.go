@@ -1,4 +1,4 @@
-package config
+package vconfig
 
 // The EMAIL_CLIENT variable is used to receive statistics from Vision UI by email.
 // Currently, Gmail is used to send mail. Enter your gmail address.

@@ -2,16 +2,17 @@ package main
 
 import (
 	"github.com/noneandundefined/vision-go"
-	"github.com/noneandundefined/vision-go/config"
 	"github.com/noneandundefined/vision-go/pkg/vemail"
+	"github.com/noneandundefined/vision-go/vconfig"
 )
 
 func main() {
 	vision := vision.NewVision()
 
 	// CONFIG
-	config.EMAIL_CLIENT = "artemvlasiv1909@gmail.com"
-	config.EMAIL_PASSWORD = "bdhdqbfglvdxuqsx"
+	vconfig.EMAIL_CLIENT = "artemvlasiv1909@gmail.com"
+	vconfig.ATTACH_LOGFILES = true
+	vconfig.LOGFILES_BY_TIME_STYLES = true
 
 	vemail.EmailStats(vision)
 }

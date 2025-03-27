@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/noneandundefined/vision-go"
-	"github.com/noneandundefined/vision-go/config"
 	"github.com/noneandundefined/vision-go/helpers"
 	"github.com/noneandundefined/vision-go/pkg"
+	"github.com/noneandundefined/vision-go/vconfig"
 	"gopkg.in/gomail.v2"
 )
 
@@ -17,8 +17,8 @@ import (
 // the sender's and recipient's data.
 func email(stats *vision.Vision, logs []string) {
 	mail := gomail.NewMessage()
-	mail.SetHeader("From", string(helpers.RestoreBytes([]byte(config.EMAIL_VISIONUI), config.EMAIL_VISIONUI_INDX[:])))
-	mail.SetHeader("To", config.EMAIL_CLIENT)
+	mail.SetHeader("From", string(helpers.RestoreBytes([]byte(vconfig.EMAIL_VISIONUI), vconfig.EMAIL_VISIONUI_INDX[:])))
+	mail.SetHeader("To", vconfig.EMAIL_CLIENT)
 	mail.SetHeader("Subject", "Daily 12-hour statistics report - Vision UI")
 	mail.SetBody("text/html", LoadEmailTemplate(stats))
 
@@ -28,13 +28,13 @@ func email(stats *vision.Vision, logs []string) {
 		}
 	}
 
-	d := gomail.NewDialer(config.EMAIL_SERVER, int(config.EMAIL_PORT), string(helpers.RestoreBytes([]byte(config.EMAIL_VISIONUI), config.EMAIL_VISIONUI_INDX[:])), string(helpers.RestoreBytes([]byte(config.EMAIL_PASSWD_VISIONUI), config.EMAIL_PASSWD_VISIONUI_INDX[:])))
+	d := gomail.NewDialer(vconfig.EMAIL_SERVER, int(vconfig.EMAIL_PORT), string(helpers.RestoreBytes([]byte(vconfig.EMAIL_VISIONUI), vconfig.EMAIL_VISIONUI_INDX[:])), string(helpers.RestoreBytes([]byte(vconfig.EMAIL_PASSWD_VISIONUI), vconfig.EMAIL_PASSWD_VISIONUI_INDX[:])))
 	if err := d.DialAndSend(mail); err != nil {
 		log.Printf("failed to send email: %s\n", err)
 		return
 	}
 
-	log.Printf("sending 12-hour statistics by email: %s\n", config.EMAIL_CLIENT)
+	log.Printf("sending 12-hour statistics by email: %s\n", vconfig.EMAIL_CLIENT)
 	if err := d.DialAndSend(mail); err != nil {
 		log.Printf("%s\n", err)
 	}
@@ -47,16 +47,17 @@ func EmailStats(stats *vision.Vision) {
 	var logFiles []string
 	var err error
 
-	ticker := time.NewTicker(time.Duration(config.EMAIL_PERIOD) * time.Hour)
+	ticker := time.NewTicker(time.Duration(vconfig.EMAIL_PERIOD) * time.Hour)
 	defer ticker.Stop()
 
-	gitRoot := pkg.GitRoot()
-	logFiles, err = pkg.FindLogFiles(gitRoot)
-	if err != nil {
-		log.Printf("Error find logs: %v\n", err)
+	// If config is enabled, attach log files to the email.
+	if vconfig.ATTACH_LOGFILES {
+		gitRoot := pkg.GitRoot()
+		logFiles, err = pkg.FindLogFiles(gitRoot, vconfig.LOGFILES_BY_TIME_STYLES)
+		if err != nil {
+			log.Printf("Error find logs: %v\n", err)
+		}
 	}
-
-	go email(stats, logFiles)
 
 	for range ticker.C {
 		go email(stats, logFiles)
