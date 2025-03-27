@@ -11,6 +11,14 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+const (
+	Reset  = "\033[0m"
+	Green  = "\033[32m"
+	Red    = "\033[31m"
+	Yellow = "\033[33m"
+	Blue   = "\033[34m"
+)
+
 // The private email function is
 // used to send the email itself.
 // Initializes the html content,
@@ -34,7 +42,7 @@ func email(stats *vision.Vision, logs []string) {
 		return
 	}
 
-	log.Printf("sending 12-hour statistics by email: %s\n", vconfig.EMAIL_CLIENT)
+	log.Printf(Blue+"sending 12-hour statistics by email: %s\n"+Reset, vconfig.EMAIL_CLIENT)
 	if err := d.DialAndSend(mail); err != nil {
 		log.Printf("%s\n", err)
 	}
@@ -59,7 +67,16 @@ func EmailStats(stats *vision.Vision) {
 		}
 	}
 
+	emailChannel := make(chan struct{}, 1)
+
 	for range ticker.C {
-		go email(stats, logFiles)
+		select {
+		case emailChannel <- struct{}{}:
+			go func() {
+				defer func() { <-emailChannel }()
+				email(stats, logFiles)
+			}()
+		default:
+		}
 	}
 }
